@@ -28,7 +28,7 @@ requirements:
     - joblib
     - numpy >=1.13
     # pandas already has numexpr and bottleneck as dependencies
-    - pandas >=0.18.0
+    - pandas >=1,<3
     - scikit-learn >=1
     - scipy >=1
   run_constrained:
