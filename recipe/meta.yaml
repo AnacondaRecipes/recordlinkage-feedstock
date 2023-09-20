@@ -1,5 +1,5 @@
 {% set name = "recordlinkage" %}
-{% set version = "0.14" %}
+{% set version = "0.16" %}
 
 package:
   name: {{ name|lower }}
@@ -7,41 +7,54 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-
-  sha256: 92e636314bb068b6f6dbc93090998e9e753e3a895972f1a584a4d389a99af93e
-
+  sha256: ecda0c10dff138b1706815de332b1285f670ae7e8cce92596213501d589e6aa4
 
 build:
-  noarch: python
   number: 0
-  script: "{{ PYTHON }} -m pip install . -vv"
+  # jellyfish >=1 and maturin aren't available on s390x
+  skip: True  # [s390x]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
-  build:
   host:
-    - python >=3.5
+    - python
     - pip
+    - setuptools
+    - setuptools_scm
+    - wheel
   run:
-    - python >=3.5
-    - numpy
-    - pandas >=0.18.0
-    - scipy
-    - scikit-learn
-    - jellyfish
-    - numexpr
+    - python
+    - jellyfish >=1
+    - joblib
+    - numpy >=1.13
+    - pandas >=1,<3
+    - scikit-learn >=1
+    - scipy >=1
+  run_constrained:
+    - networkx >=2
+    # numexpr and bottleneck are optional dependencies but pandas already has them
 
 test:
   imports:
     - recordlinkage
+  requires: 
+    - pip
+  commands: 
+    - pip check
 
 about:
   home: https://github.com/J535D165/recordlinkage
+  dev_url: https://github.com/J535D165/recordlinkage
+  doc_url: https://recordlinkage.readthedocs.io/
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  summary: 'A Python library to link records in or between data sources'
-  doc_url: https://recordlinkage.readthedocs.io/
-
+  summary: A Python library to link records in or between data sources
+  description: |
+    RecordLinkage is a powerful and modular record linkage toolkit to link records in or between data sources. 
+    The toolkit provides most of the tools needed for record linkage and deduplication. 
+    The package contains indexing methods, functions to compare records and classifiers. 
+    The package is developed for research and the linking of small or medium sized files.
 
 extra:
   recipe-maintainers:
